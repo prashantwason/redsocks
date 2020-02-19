@@ -528,11 +528,15 @@ void redsocks_event_error(struct bufferevent *buffev, short what, void *_arg)
         {
             if (!(client->relay_evshut & EV_WRITE) && client->relay_connected)
                 bufferevent_enable(client->relay, EV_WRITE);
+            else
+                redsocks_drop_client(client);
         }
         else
         {
             if (!(client->client_evshut & EV_WRITE))
                 bufferevent_enable(client->client, EV_WRITE);
+            else
+                redsocks_drop_client(client);
         }
     }
     else {
