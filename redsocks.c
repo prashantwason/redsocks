@@ -517,11 +517,12 @@ void redsocks_event_error(struct bufferevent *buffev, short what, void *_arg)
 
     if (!(what & BEV_EVENT_ERROR))
         errno = redsocks_socket_geterrno(client, buffev);
-    redsocks_log_errno(client, LOG_DEBUG, "%s, what: " event_fmt_str,
+    redsocks_log_errno(client, LOG_DEBUG, "%s, errno=%d, what: " event_fmt_str,
                             buffev == client->client?"client":"relay",
+                            errno,
                             event_fmt(what));
 
-    if (what == (BEV_EVENT_READING|BEV_EVENT_EOF)) {
+    if (what == (BEV_EVENT_READING|BEV_EVENT_EOF) && errno != ECONNREFUSED) {
         redsocks_shutdown(client, buffev, SHUT_RD, 1);
         // Ensure the other party could send remaining data and SHUT_WR also
         if (buffev == client->client)
