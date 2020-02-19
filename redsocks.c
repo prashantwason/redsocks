@@ -515,7 +515,7 @@ void redsocks_event_error(struct bufferevent *buffev, short what, void *_arg)
 
     redsocks_touch_client(client);
 
-    if (!(what & BEV_EVENT_ERROR))
+    if (what & BEV_EVENT_ERROR)
         errno = redsocks_socket_geterrno(client, buffev);
     redsocks_log_errno(client, LOG_DEBUG, "%s, errno=%d, what: " event_fmt_str,
                             buffev == client->client?"client":"relay",
