@@ -521,7 +521,9 @@ void redsocks_event_error(struct bufferevent *buffev, short what, void *_arg)
                             buffev == client->client?"client":"relay",
                             errno,
                             event_fmt(what));
-
+    redsocks_drop_client(client);
+    return;
+    
     if (what == (BEV_EVENT_READING|BEV_EVENT_EOF) && errno != ECONNREFUSED) {
         redsocks_shutdown(client, buffev, SHUT_RD, 1);
         // Ensure the other party could send remaining data and SHUT_WR also
